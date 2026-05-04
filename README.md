@@ -202,7 +202,7 @@ report/
 ## 📄 Report
 
 📘 Full report available here:
-`report/Report.pdf`
+`/Report.pdf`
 
 ---
 
