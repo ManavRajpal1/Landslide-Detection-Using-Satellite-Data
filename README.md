@@ -1,355 +1,228 @@
-# 🌍 Landslide Detection Using Multi-Temporal SAR Data & Deep Learning
+# 🌍 Landslide Detection Using SAR Data & Deep Learning
 
-## 📌 1. Introduction
+## 📌 Overview
 
-Landslides are a critical geohazard responsible for significant human and economic losses worldwide. Traditional monitoring approaches rely heavily on optical imagery, which is limited by:
+Landslides are highly destructive natural hazards that cause severe damage to infrastructure and loss of life. This project presents a **deep learning-based semantic segmentation pipeline for automated landslide detection using multi-temporal Synthetic Aperture Radar (SAR) data**.
 
-* Cloud cover
-* Illumination conditions
-* Weather disturbances
-
-To overcome these limitations, this project leverages **Synthetic Aperture Radar (SAR)**, which provides:
-
-* 🌧️ All-weather imaging capability
-* 🌙 Day-and-night acquisition
-* 🌫️ Penetration through clouds and atmospheric noise
-
-This work presents a **deep learning-based semantic segmentation framework for landslide detection using multi-temporal SAR data and terrain information**.
+Unlike optical imagery, SAR data enables **robust monitoring under all weather and lighting conditions**, making it highly suitable for disaster response systems.
 
 ---
 
-## 🎯 2. Problem Formulation
+## 🎯 Objectives
 
-We formulate landslide detection as a **binary semantic segmentation problem**:
-
-* **Input:** Multi-modal SAR + terrain data
-* **Output:** Pixel-wise classification
-
-  * `0 → Non-landslide`
-  * `1 → Landslide`
-
-Challenges:
-
-* Extreme **class imbalance** (landslide pixels are sparse)
-* **Speckle noise** in SAR imagery
-* High **intra-class variability** (terrain differences)
-* Need for **cross-region generalization**
+* Develop an **end-to-end landslide detection pipeline**
+* Compare multiple **state-of-the-art segmentation architectures**
+* Analyze the effect of **data sampling strategies**
+* Evaluate **cross-region generalization capability**
+* Improve detection using **multi-modal SAR + terrain features**
 
 ---
 
-## 🛰️ 3. Dataset Description
+## 🚀 Key Contributions
 
-### 📍 Dataset I — Hokkaido, Japan (2017 Event)
+* Designed a **multi-temporal SAR-based segmentation framework**
+* Implemented **ASKU-Net++**, a custom attention-based architecture with deep supervision
+* Evaluated **8 deep learning models** on landslide detection
+* Proposed and analyzed **two sampling strategies**:
+
+  * **High-Coverage Sampling** → improves detection performance
+  * **Low-Redundancy Sampling** → reduces dataset size with minimal performance drop
+* Integrated **multi-modal inputs (VV, VH, DEM)**
+* Demonstrated **cross-region generalization (Japan → Indonesia)**
+
+---
+
+## 🛰️ Datasets
+
+### Dataset I: Hokkaido, Japan (2017)
 
 * 26 temporal Sentinel-1 SAR acquisitions
-* Dual polarization: VV, VH
-* Includes DEM (Digital Elevation Model)
-* Pixel-wise annotated landslide masks
+* VV & VH polarization
+* DEM included
+* Pixel-wise landslide labels
 
----
-
-### 📍 Dataset II — Mt. Talakmau, Indonesia
+### Dataset II: Mt. Talakmau, Indonesia
 
 * 20 temporal SAR acquisitions
-* Different terrain morphology and vegetation density
-* Used for **out-of-distribution evaluation**
+* Different terrain & vegetation conditions
+* Used for **model generalization testing**
 
 ---
 
-## 🧠 4. Input Representation
+## 🧠 Data Processing Pipeline
 
-Each sample integrates **multi-temporal and multi-modal information**:
+1. Extract last **T temporal SAR frames**
+2. Combine:
 
-* SAR Time Series: Last 12 timesteps (VV + VH)
-* Terrain Feature: DEM (static)
-
-Final input per patch:
-
-```id="repbox"
-Input Tensor Shape: (C, H, W) = (3, 256, 256)
-Channels:
-  - DEM
-  - VV (timestep t)
-  - VH (timestep t)
-```
-
-This design allows the model to learn:
-
-* Temporal backscatter variations
-* Terrain-dependent landslide patterns
+   * VV polarization
+   * VH polarization
+   * DEM (Digital Elevation Model)
+3. Crop images into **256 × 256 patches**
+4. Apply **sampling strategy**
+5. Perform **data augmentation** (flip, rotation)
 
 ---
 
-## ⚙️ 5. Data Preprocessing Pipeline
+## 🔍 Sampling Strategies
 
-### Step 1: Data Loading
+### 1. High-Coverage Sampling
 
-* Zarr format used for efficient large-scale storage
-* Missing values handled using zero imputation
-
----
-
-### Step 2: Spatial Normalization
-
-* Cropping to nearest multiple of 256
-* Ensures compatibility with CNN architectures
+* Select patches with **higher landslide pixel ratio**
+* Improves model learning for rare classes
+* Leads to **better segmentation accuracy**
 
 ---
 
-### Step 3: Patch Extraction
+### 2. Low-Redundancy Sampling
 
-* Patch size: **256 × 256**
-* Sliding window approach
-* Multi-temporal slicing across SAR sequences
-
----
-
-### Step 4: Feature Fusion
-
-* DEM replicated across temporal dimension
-* Combined with SAR channels to form unified input
+* Reduces overlapping patches
+* Minimizes dataset size
+* Maintains comparable performance with fewer samples
 
 ---
 
-## ⚙️ 6. Sampling Strategies
-
-A critical contribution of this project is the evaluation of **data sampling strategies**:
-
----
-
-### 🔹 6.1 High-Coverage Sampling
-
-**Goal:** Maximize spatial representation
-
-* Extracts patches across entire region
-* Ensures inclusion of:
-
-  * Landslide regions
-  * Background terrain
-* Improves:
-
-  * Class balance
-  * Boundary learning
-
-📈 **Effect:**
-
-* Higher segmentation accuracy
-* Better in-domain performance
-
----
-
-### 🔹 6.2 Low-Redundancy Sampling
-
-**Goal:** Reduce data duplication
-
-* Avoids overlapping patches
-* Minimizes redundant spatial information
-* Maintains diversity with fewer samples
-
-📉 **Effect:**
-
-* Reduced computational cost
-* Comparable performance
-* Faster training
-
----
-
-### ⚖️ Trade-off Insight
-
-| Strategy       | Accuracy       | Efficiency |
-| -------------- | -------------- | ---------- |
-| High-Coverage  | High           | Lower      |
-| Low-Redundancy | Slightly lower | High       |
-
----
-
-## 🤖 7. Model Architectures
-
-The following architectures were benchmarked:
+## 🤖 Models Implemented
 
 * U-Net
 * LinkNet
 * U-Net++
 * PAN (Pyramid Attention Network)
+* DeepLabv3
 * DeepLabv3+
 * DRs-UNet
+* **ASKU-Net++ (Proposed)**
 * MSSCSAF-Net
-* **ASKU-Net++ (Proposed Model)**
 
 ---
 
-## 🧩 8. Proposed Model — ASKU-Net++
+## 🏗️ Model Architecture (ASKU-Net++)
 
-ASKU-Net++ extends U-Net++ with:
-
-### 🔁 Nested Dense Skip Connections
-
-* Enables multi-scale feature propagation
-* Reduces semantic gap between encoder and decoder
+* Encoder-decoder structure with skip connections
+* Multi-scale feature fusion
+* Attention blocks for feature refinement
+* Deep supervision at multiple decoder levels
 
 ---
 
-### 🎯 Attention Mechanism
+## ⚙️ Training Details
 
-* Channel-wise attention blocks
-* Focus on relevant spatial regions
-* Suppress noise from SAR signals
-
----
-
-### ⬆️ Multi-Scale Feature Fusion
-
-* Combines shallow + deep features
-* Improves detection of:
-
-  * Small landslides
-  * Irregular boundaries
+* Patch size: **256 × 256**
+* Epochs: **100**
+* Batch size: **4**
+* Optimizer: **AdamW**
+* Loss Function: **CrossEntropy / Dice Loss**
+* Framework: **PyTorch Lightning**
+* Hardware: **NVIDIA Tesla P100 (Kaggle)**
 
 ---
 
-### 🧠 Deep Supervision
-
-* Intermediate outputs at multiple decoder levels
-* Stabilizes training
-* Improves gradient flow
-
----
-
-## 📉 9. Loss Function
-
-### Dice Loss
-
-Designed for imbalanced segmentation tasks:
-
-* Maximizes overlap between prediction and ground truth
-* Reduces bias toward majority class
-* Particularly effective for sparse landslide pixels
-
----
-
-## 📊 10. Evaluation Metrics
+## 📊 Evaluation Metrics
 
 * Precision
 * Recall
 * F1 Score
 * IoU (Intersection over Union)
-* AUPRC (Area Under Precision-Recall Curve)
+* AUPRC
 
 ---
 
-## 🧪 11. Experimental Setup
+## 📈 Results
 
-| Parameter     | Value             |
-| ------------- | ----------------- |
-| Patch Size    | 256 × 256         |
-| Epochs        | 100               |
-| Batch Size    | 4                 |
-| Optimizer     | AdamW             |
-| Learning Rate | 1e-3              |
-| Weight Decay  | 1e-4              |
-| Hardware      | NVIDIA Tesla P100 |
+### Quantitative Comparison (IoU)
 
----
-
-## 📈 12. Results & Analysis
-
-### 🥇 Best Model
-
-* **MSSCSAF-Net achieved highest performance across all metrics**
+| Model           | IoU       |
+| --------------- | --------- |
+| U-Net           | 0.710     |
+| LinkNet         | 0.665     |
+| U-Net++         | 0.705     |
+| PAN             | 0.720     |
+| DeepLabv3       | 0.738     |
+| DeepLabv3+      | 0.770     |
+| DRs-UNet        | 0.686     |
+| ASKU-Net++      | 0.773     |
+| **MSSCSAF-Net** | **0.792** |
 
 ---
 
-### 🥈 Competitive Models
+## 🖼️ Qualitative Results
 
-* DeepLabv3+
-* ASKU-Net++
+<p align="center">
+  <img src="results/figures/model_comparison.png" width="800"/>
+</p>
 
----
-
-### 🔍 Observations
-
-* High-coverage sampling improves segmentation accuracy
-* Low-redundancy sampling achieves similar results with fewer samples
-* Multi-modal input (SAR + DEM) significantly boosts performance
-* Models generalize well across geographic regions
+* Models with higher IoU show better boundary alignment
+* Reduced false positives in attention-based models
 
 ---
 
-## 🌍 13. Cross-Region Generalization
+## 📉 Training Performance
 
-Trained on:
+<p align="center">
+  <img src="results/figures/training_curves.png" width="700"/>
+</p>
 
-* 🇯🇵 Japan dataset
-
-Tested on:
-
-* 🇮🇩 Indonesia dataset
-
-### Result:
-
-* Strong generalization performance
-* Minimal metric degradation
-* Demonstrates robustness of learned features
+* Stable convergence across epochs
+* Improved performance due to deep supervision
 
 ---
 
-## 📁 14. Project Structure
+## 🌍 Generalization Capability
 
-```id="fulltree"
-├── data/              # Dataset (excluded from repo)
-├── configs/           # Training configuration
-├── src/
-│   ├── data/          # Preprocessing & dataset
-│   ├── models/        # Architectures
-│   ├── training/      # Lightning modules
-│   ├── losses/        # Loss functions
-│   └── utils/         # Metrics & visualization
-│
-├── results/           # Metrics & outputs
-├── report/            # Full report
-├── train.py
-├── evaluate.py
-├── inference.py
+* Model trained on **Japan dataset**
+* Tested on **Indonesia dataset**
+* Demonstrates **robust cross-region performance**
+
+---
+
+## 🛠️ Tech Stack
+
+* PyTorch
+* PyTorch Lightning
+* segmentation-models-pytorch
+* TorchMetrics
+* Albumentations
+* xarray, rasterio, zarr
+
+---
+
+## 📁 Project Structure
+
+```
+data/
+src/
+configs/
+scripts/
+results/
+checkpoints/
+report/
 ```
 
 ---
 
-## ▶️ 15. Reproducibility Guide
+## 📄 Report
 
-```id="runsteps"
-# Install dependencies
-pip install -r requirements.txt
-
-# Add dataset
-mkdir -p data/raw
-# (Place dataset here)
-
-# Train
-python train.py
-
-# Evaluate
-python evaluate.py
-```
+📘 Full report available here:
+`report/Report.pdf`
 
 ---
 
-## 🚀 16. Future Work
+## 🔮 Future Work
 
-* Transformer-based segmentation (Swin, SegFormer)
-* Global-scale dataset evaluation
-* Real-time deployment pipeline
-* Integration with disaster response systems
+* Transformer-based architectures (Vision Transformers)
+* Larger global datasets
+* Real-time landslide monitoring system
+* Web-based deployment (Streamlit)
 
 ---
 
-## 👨‍💻 17. Author
+## 👨‍💻 Author
 
 **Manav Rajpal**
 M.Tech – Signal Processing & Machine Learning
-National Institute of Technology Karnataka (NITK), Surathkal
+NITK Surathkal
 
 ---
 
 ## ⭐ Support
 
-If this project helped you, consider giving it a ⭐ on GitHub!
+If you found this project useful, consider giving it a ⭐
