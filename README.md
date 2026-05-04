@@ -22,7 +22,7 @@ Unlike optical imagery, SAR data enables **robust monitoring under all weather a
 
 * Designed a **multi-temporal SAR-based segmentation framework**
 * Implemented **ASKU-Net++**, a custom attention-based architecture with deep supervision
-* Evaluated **8 deep learning models** on landslide detection
+* Evaluated **8+ deep learning models** for landslide detection
 * Proposed and analyzed **two sampling strategies**:
 
   * **High-Coverage Sampling** → improves detection performance
@@ -68,7 +68,7 @@ Unlike optical imagery, SAR data enables **robust monitoring under all weather a
 ### 1. High-Coverage Sampling
 
 * Select patches with **higher landslide pixel ratio**
-* Improves model learning for rare classes
+* Improves learning for **rare landslide class**
 * Leads to **better segmentation accuracy**
 
 ---
@@ -81,6 +81,24 @@ Unlike optical imagery, SAR data enables **robust monitoring under all weather a
 
 ---
 
+## 🧩 Sample Data
+
+### Dataset 1 (Hokkaido, Japan)
+
+<p align="center">
+  <img src="results/figures/sample_patch_dataset1.png" width="600"/>
+</p>
+
+---
+
+### Dataset 2 (Indonesia)
+
+<p align="center">
+  <img src="results/figures/sample_patch_dataset2.png" width="600"/>
+</p>
+
+---
+
 ## 🤖 Models Implemented
 
 * U-Net
@@ -90,7 +108,7 @@ Unlike optical imagery, SAR data enables **robust monitoring under all weather a
 * DeepLabv3
 * DeepLabv3+
 * DRs-UNet
-* **ASKU-Net++ (Proposed)**
+* ASKU-Net++
 * MSSCSAF-Net
 
 ---
@@ -110,7 +128,7 @@ Unlike optical imagery, SAR data enables **robust monitoring under all weather a
 * Epochs: **100**
 * Batch size: **4**
 * Optimizer: **AdamW**
-* Loss Function: **CrossEntropy / Dice Loss**
+* Loss Function: **CrossEntropy + Dice Loss**
 * Framework: **PyTorch Lightning**
 * Hardware: **NVIDIA Tesla P100 (Kaggle)**
 
@@ -128,30 +146,55 @@ Unlike optical imagery, SAR data enables **robust monitoring under all weather a
 
 ## 📈 Results
 
-### Quantitative Comparison (IoU)
+### 📊 Quantitative Comparison
 
-| Model           | IoU       |
-| --------------- | --------- |
-| U-Net           | 0.710     |
-| LinkNet         | 0.665     |
-| U-Net++         | 0.705     |
-| PAN             | 0.720     |
-| DeepLabv3       | 0.738     |
-| DeepLabv3+      | 0.770     |
-| DRs-UNet        | 0.686     |
-| ASKU-Net++      | 0.773     |
-| **MSSCSAF-Net** | **0.792** |
+<p align="center">
+  <img src="results/figures/model_results_table.png" width="850"/>
+</p>
 
 ---
 
-## 🖼️ Qualitative Results
+### 📊 High-Coverage Sampling Results (Dataset 1)
+
+<p align="center">
+  <img src="results/figures/high_coverage_results_d1.png" width="750"/>
+</p>
+
+* Improves detection of landslide regions
+* Better performance on imbalanced data
+
+---
+
+### 📊 Low-Redundancy Sampling Results (Dataset 1)
+
+<p align="center">
+  <img src="results/figures/low_redundancy_results_d1.png" width="750"/>
+</p>
+
+* Reduces dataset size significantly
+* Maintains competitive performance
+
+---
+
+### 🌍 Cross-Dataset Generalization (D1 → D2)
+
+<p align="center">
+  <img src="results/figures/d1_to_d2_results.png" width="750"/>
+</p>
+
+* Models trained on Japan dataset tested on Indonesia
+* Demonstrates strong generalization capability
+
+---
+
+### 🖼️ Model Output Comparison
 
 <p align="center">
   <img src="results/figures/model_comparison.png" width="800"/>
 </p>
 
-* Models with higher IoU show better boundary alignment
-* Reduced false positives in attention-based models
+* Higher IoU models show better boundary detection
+* Attention-based models reduce false positives
 
 ---
 
@@ -168,9 +211,9 @@ Unlike optical imagery, SAR data enables **robust monitoring under all weather a
 
 ## 🌍 Generalization Capability
 
-* Model trained on **Japan dataset**
-* Tested on **Indonesia dataset**
-* Demonstrates **robust cross-region performance**
+* Train: **Hokkaido (Japan)**
+* Test: **Indonesia dataset**
+* Shows robustness across terrain and geography
 
 ---
 
@@ -202,7 +245,7 @@ report/
 ## 📄 Report
 
 📘 Full report available here:
-`/Report.pdf`
+`report/MajorProject.pdf`
 
 ---
 
