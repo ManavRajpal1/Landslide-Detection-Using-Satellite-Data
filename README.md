@@ -86,7 +86,7 @@ Unlike optical imagery, SAR data enables **robust monitoring under all weather a
 ### Dataset 1 (Hokkaido, Japan)
 
 <p align="center">
-  <img src="results/figures/sample_patch_dataset1.png" width="600"/>
+  <img src="results/figures/sd1.png" width="600"/>
 </p>
 
 ---
@@ -94,7 +94,7 @@ Unlike optical imagery, SAR data enables **robust monitoring under all weather a
 ### Dataset 2 (Indonesia)
 
 <p align="center">
-  <img src="results/figures/sample_patch_dataset2.png" width="600"/>
+  <img src="results/figures/sd2.png" width="600"/>
 </p>
 
 ---
@@ -157,7 +157,7 @@ Unlike optical imagery, SAR data enables **robust monitoring under all weather a
 ### 📊 High-Coverage Sampling Results (Dataset 1)
 
 <p align="center">
-  <img src="results/figures/high_coverage_results_d1.png" width="750"/>
+  <img src="results/figures/hcc-d1.png" width="750"/>
 </p>
 
 * Improves detection of landslide regions
@@ -168,7 +168,7 @@ Unlike optical imagery, SAR data enables **robust monitoring under all weather a
 ### 📊 Low-Redundancy Sampling Results (Dataset 1)
 
 <p align="center">
-  <img src="results/figures/low_redundancy_results_d1.png" width="750"/>
+  <img src="results/figures/lrc-d1.png" width="750"/>
 </p>
 
 * Reduces dataset size significantly
@@ -179,7 +179,7 @@ Unlike optical imagery, SAR data enables **robust monitoring under all weather a
 ### 🌍 Cross-Dataset Generalization (D1 → D2)
 
 <p align="center">
-  <img src="results/figures/d1_to_d2_results.png" width="750"/>
+  <img src="results/figures/d1-d2.png" width="750"/>
 </p>
 
 * Models trained on Japan dataset tested on Indonesia
