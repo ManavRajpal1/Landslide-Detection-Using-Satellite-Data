@@ -1,0 +1,38 @@
+# Core Deep Learning
+torch>=2.0
+torchvision>=0.15
+pytorch-lightning>=2.0
+
+# Segmentation models
+segmentation-models-pytorch
+
+# Metrics
+torchmetrics
+
+# Scientific computing
+numpy
+pandas
+scikit-learn
+
+# Geospatial & data handling
+xarray
+zarr
+xbatcher
+rasterio
+
+# Data augmentation
+albumentations
+
+# Visualization
+matplotlib
+
+# Utilities
+fvcore
+tqdm
+pyyaml
+
+# Optional (for model summary / debugging)
+torchsummary
+
+# Optional (for notebooks / dev)
+jupyter
